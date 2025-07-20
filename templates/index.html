@@ -111,6 +111,78 @@
             background-color: #555;
         }
     </style>
+
+    <script>
+        // Disable critical browser shortcuts (useful in Chromium Kiosk Mode)
+        document.addEventListener('keydown', function(event) {
+            // Normalize key name
+            const key = event.key.toLowerCase();
+
+            // === CTRL-based shortcuts ===
+            if (event.ctrlKey) {
+                // Prevent Ctrl + [various]
+                const forbiddenCtrlKeys = ['w', 't', 'r', 'n', 'p', 's', 'o', 'u', '+', '-', '0'];
+                if (forbiddenCtrlKeys.includes(key)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                // Prevent Ctrl + Shift + I (DevTools), J, C
+                if (event.shiftKey && ['i', 'j', 'c'].includes(key)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                // Prevent Ctrl + Shift + Q (log out on some systems)
+                if (event.shiftKey && key === 'q') {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            }
+
+            // === F12 (DevTools) ===
+            if (key === 'f12') {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // === Alt + F4 (close window) ===
+            if (event.altKey && key === 'f4') {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // === Ctrl + Tab / Ctrl + Shift + Tab (switch tab) ===
+            if (event.ctrlKey && (key === 'tab')) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // === Alt + Left/Right (Back/Forward navigation) ===
+            if (event.altKey && (key === 'arrowleft' || key === 'arrowright')) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // === Escape key (can close dialogs or fullscreen) ===
+            if (key === 'escape') {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // === F5 (reload) or Ctrl+F5 (force reload) ===
+            if (key === 'f5') {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // === Home / End / PageUp / PageDown (navigation) ===
+            if (['home', 'end', 'pageup', 'pagedown'].includes(key)) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        });
+    </script>
 </head>
 <body onload="focusQuestionInput()">
     <header>
