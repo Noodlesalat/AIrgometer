@@ -113,28 +113,38 @@
     </style>
 
     <script>
-        // Disable critical browser shortcuts (useful in Chromium Kiosk Mode)
+        // Sperrt unerwünschte Tastenkombinationen für den Kiosk-Modus
         document.addEventListener('keydown', function(event) {
-            // Normalize key name
             const key = event.key.toLowerCase();
 
-            // === CTRL-based shortcuts ===
+            // === Ctrl + [verbotene Tasten] ===
             if (event.ctrlKey) {
-                // Prevent Ctrl + [various]
-                const forbiddenCtrlKeys = ['w', 't', 'r', 'n', 'p', 's', 'o', 'u', '+', '-', '0'];
+                const forbiddenCtrlKeys = [
+                    'w', // Tab schließen
+                    't', // Neuer Tab
+                    'r', // Reload
+                    'n', // Neues Fenster
+                    'p', // Drucken
+                    's', // Speichern
+                    'o', // Öffnen
+                    'u', // Seitenquelltext
+                    '+', '-', '0', // Zoom
+                    'd', // Lesezeichen hinzufügen
+                    'f'  // Suche
+                ];
                 if (forbiddenCtrlKeys.includes(key)) {
                     event.preventDefault();
                     event.stopPropagation();
                 }
 
-                // Prevent Ctrl + Shift + I (DevTools), J, C
-                if (event.shiftKey && ['i', 'j', 'c'].includes(key)) {
+                // === Ctrl + Shift + [DevTools, Konsole, etc.] ===
+                if (event.shiftKey && ['i', 'j', 'c', 'q'].includes(key)) {
                     event.preventDefault();
                     event.stopPropagation();
                 }
 
-                // Prevent Ctrl + Shift + Q (log out on some systems)
-                if (event.shiftKey && key === 'q') {
+                // === Ctrl + Tab / Ctrl + Shift + Tab (Tabs wechseln) ===
+                if (key === 'tab') {
                     event.preventDefault();
                     event.stopPropagation();
                 }
@@ -146,43 +156,32 @@
                 event.stopPropagation();
             }
 
-            // === Alt + F4 (close window) ===
+            // === Alt + F4 (Schließen) ===
             if (event.altKey && key === 'f4') {
                 event.preventDefault();
                 event.stopPropagation();
             }
 
-            // === Ctrl + Tab / Ctrl + Shift + Tab (switch tab) ===
-            if (event.ctrlKey && (key === 'tab')) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-
-            // === Alt + Left/Right (Back/Forward navigation) ===
+            // === Alt + PfeilLinks/Rechts (Navigation) ===
             if (event.altKey && (key === 'arrowleft' || key === 'arrowright')) {
                 event.preventDefault();
                 event.stopPropagation();
             }
 
-            // === Escape key (can close dialogs or fullscreen) ===
-            if (key === 'escape') {
+            // === F5 und Escape ===
+            if (key === 'f5' || key === 'escape') {
                 event.preventDefault();
                 event.stopPropagation();
             }
 
-            // === F5 (reload) or Ctrl+F5 (force reload) ===
-            if (key === 'f5') {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-
-            // === Home / End / PageUp / PageDown (navigation) ===
+            // === Page navigation ===
             if (['home', 'end', 'pageup', 'pagedown'].includes(key)) {
                 event.preventDefault();
                 event.stopPropagation();
             }
         });
     </script>
+
 </head>
 <body onload="focusQuestionInput()">
     <header>
