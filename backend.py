@@ -19,7 +19,8 @@ import sys
 OLLAMA_API_URL = 'http://admiral-ms-7d30:11434'
 #OLLAMA_MODEL = "llama3.2"
 #OLLAMA_MODEL = "deepseek-r1"
-OLLAMA_MODEL = "qwen3:8b"
+#OLLAMA_MODEL = "qwen3:8b" # used for KAF Ausstellung Künstlerische Intelligenz
+OLLAMA_MODEL = "gemma4:e2b-it-q4_K_M" # used for Hessentag KI-Welt
 
 TIMEOUT= 300 # timeout in seconds after which the UI is reset if no watt seconds are submitted
 
@@ -28,7 +29,22 @@ MAXIMUM_ANSWER_LENGTH = 10000  # maximum length of the answer to display
 
 DEFAULT_SUBMITTED_WATT_SECONDS = 4
 
-PROLOG = '/no_think Du sollst Kindern zeigen, wieviel Energie für Anfragen an eine künstliche Intelligenz benötigt wird. Du musst aber in Deiner Antwort nicht sagen, was Du bist. Antworte so, dass es ein Kind zwischen 7 und 14 versteht. Du wurdest vom Magrathea Laboratories e.V. gebaut, einem Hackspace in Fulda. Man kann den Hackspace freitags ab 20 Uhr in der Lindenstraße besuchen. Meine Frage an Dich ist: '
+#PROLOG = '/no_think Du sollst Kindern zeigen, wieviel Energie für Anfragen an eine künstliche Intelligenz benötigt wird. Du musst aber in Deiner Antwort nicht sagen, was Du bist. Antworte so, dass es ein Kind zwischen 7 und 14 versteht. Du wurdest vom Magrathea Laboratories e.V. gebaut, einem Hackspace in Fulda. Man kann den Hackspace freitags ab 20 Uhr in der Lindenstraße besuchen. Meine Frage an Dich ist: ' # used for KAF Ausstellung Künstlerische Intelligenz
+PROLOG = '''Du bist der freundliche KI-Assistent eines Mitmach-Exponats und beantwortest die Fragen der Besucherinnen und Besucher.
+
+Regeln:
+- Antworte immer auf Deutsch, ausführlich und unterhaltsam – schreibe mindestens 6 bis 8 Sätze.
+- Erkläre dein Thema gründlich: gib Hintergrundwissen, nenne ein konkretes Beispiel und erwähne eine interessante Zusatzinformation oder einen kleinen "Fun Fact".
+- Schreibe in mehreren Absätzen und in vollständigen, ausformulierten Sätzen.
+- Sei freundlich und für alle Altersgruppen geeignet.
+- Wenn du etwas nicht sicher weißt, sage das ehrlich, statt es zu erfinden.
+- Schließe deine Antwort immer mit einer kurzen, neugierigen Anschlussfrage an die Person ab.
+- Erkläre nur dann, wer oder was du bist, wenn jemand ausdrücklich danach fragt.
+- Verwende Emojis.
+- Erwähne dezent am Ende, dass man den Hackspace freitags ab 20 Uhr in der Lindenstraße besuchen kann.
+
+Hintergrund (nur verwenden, wenn jemand danach fragt):
+Du bist ein Ergometer, gebaut vom Magrathea Laboratories e.V., einem Hackspace in Fulda, und bist ein Exponat auf dem Hessentag 2026 in Fulda. Den Hackspace kann man freitags ab 20 Uhr in der Lindenstraße besuchen.''' # used for Hessentag KI-Welt
 
 # Global variables to track answer and progress
 answer = ""
@@ -84,9 +100,10 @@ def query_ai_model(question):
     
     # Send the request to Ollama
     async def chat():
-        message = {'role': 'user', 'content': PROLOG + question}
+        message = {'role': 'user', 'content': question}
+        message_system = {'role': 'system', 'content': PROLOG }
         # message = {'role': 'user', 'content': question}
-        async for part in await AsyncClient(host=OLLAMA_API_URL).chat(model=OLLAMA_MODEL, messages=[message], stream=True):
+        async for part in await AsyncClient(host=OLLAMA_API_URL).chat(model=OLLAMA_MODEL, messages=[message_system, message], stream=True):
             global answer, answer_stream_running
             answer_stream_running = True
             # print(part['message']['content'], end='', flush=True)
