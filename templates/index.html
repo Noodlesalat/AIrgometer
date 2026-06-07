@@ -122,7 +122,7 @@
     </header>
     <p style="padding-top: 60px;color: gray; margin: 10px;">Stell eine Frage und steig auf das AIrgometer, um die Antwort zu bekommen!
        Bedenke beim nächsten Mal, 
-       wenn Du ChatGPT und Co eine Frage stellst: man geht von 0,3 - 2,5 Wattstunden dafür verbrauchter
+       wenn Du ChatGPT und Co eine Frage stellst: man geht von 0,3 - 2,9 Wattstunden dafür verbrauchter
        Energie aus. Ca. 10-mal mehr als bei einer Google-Anfrage.</p>
 
     <div style="margin-left: 20px; margin-right: 20px;">
@@ -234,9 +234,14 @@
                         finishedLabel.style.visibility = "visible";
                         finishedLabel.innerText = " GESCHAFFT!";
                     } else {
-                        answerDisplay.style.visibility = "hidden";
-                        goLabel.style.visibility = "hidden";
-                        goLabel.innerText = "";
+                        // only clear the go label if not currently waiting for reply
+                        if (goLabel.innerText.startsWith("Anfrage wird gesendet!")) {
+                            goLabel.innerText = goLabel.innerText + ".";
+                        } else {
+                            answerDisplay.style.visibility = "hidden";
+                            goLabel.style.visibility = "hidden";
+                            goLabel.innerText = "";
+                        }
                         finishedLabel.style.visibility = "hidden";
                         finishedLabel.innerText = "";
                     }
@@ -262,6 +267,8 @@
             } else {
                 const question = document.getElementById("question").value;
                 // If the ask button is pressed, submit the question
+                goLabel.style.visibility = "visible";
+                goLabel.innerText = "Anfrage wird gesendet! Bereit machen zum Treten!\n";
                 const response = await fetch("/ask", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
